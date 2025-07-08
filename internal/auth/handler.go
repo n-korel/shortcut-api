@@ -3,18 +3,29 @@ package auth
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/n-korel/shortcut-api/configs"
 )
 
-type AuthHandler struct{}
+type AuthHandlerDeps struct{
+	*configs.Config
+}
 
-func NewAuthHandler(router * http.ServeMux) {
-	handler := &AuthHandler{}
+type AuthHandler struct{
+		*configs.Config
+}
+
+func NewAuthHandler(router * http.ServeMux, deps AuthHandlerDeps) {
+	handler := &AuthHandler{
+		Config: deps.Config,
+	}
 	router.HandleFunc("POST /auth/login", handler.Login())
 	router.HandleFunc("POST /auth/register", handler.Register())
 }
 
 func (handler *AuthHandler) Login() http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+		fmt.Println(handler.Config.Auth.Secret)
 		fmt.Println("login")
 	}
 }

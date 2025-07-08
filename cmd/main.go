@@ -4,17 +4,19 @@ import (
 	"fmt"
 	"net/http"
 
-	// "github.com/n-korel/shortcut-api/configs"
+	"github.com/n-korel/shortcut-api/configs"
 	"github.com/n-korel/shortcut-api/internal/auth"
 )
 
 
 
 func main() {
-	// conf := configs.LoadConfig()
+	conf := configs.LoadConfig()
 	
 	router := http.NewServeMux()
-	auth.NewAuthHandler(router)
+	auth.NewAuthHandler(router, auth.AuthHandlerDeps{
+		Config: conf,
+	})
 
 	server := http.Server{
 		Addr: ":8081",
