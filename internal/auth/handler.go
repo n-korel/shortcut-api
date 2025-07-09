@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/n-korel/shortcut-api/configs"
+	"github.com/n-korel/shortcut-api/pkg/req"
+	"github.com/n-korel/shortcut-api/pkg/res"
 )
 
 type AuthHandlerDeps struct{
@@ -12,7 +14,7 @@ type AuthHandlerDeps struct{
 }
 
 type AuthHandler struct{
-		*configs.Config
+	*configs.Config
 }
 
 func NewAuthHandler(router * http.ServeMux, deps AuthHandlerDeps) {
@@ -24,14 +26,35 @@ func NewAuthHandler(router * http.ServeMux, deps AuthHandlerDeps) {
 }
 
 func (handler *AuthHandler) Login() http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-		fmt.Println(handler.Config.Auth.Secret)
-		fmt.Println("login")
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		body, err := req.HandleBody[LoginRequest](&w, r)
+		if err != nil {
+			return 
+		}
+
+		fmt.Println(body)
+
+		data := LoginResponse{
+			Token: "12345678",
+		}
+		res.Json(w, data, 200)
+		
 	}
 }
 
 func (handler *AuthHandler) Register() http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-		fmt.Println("Register")
+	return func(w http.ResponseWriter, r *http.Request) {
+		body, err := req.HandleBody[RegisterRequest](&w, r)
+		if err != nil {
+			return 
+		}
+
+		fmt.Println(body)
+
+		data := RegisterResponse{
+			Token: "12345678",
+		}
+		res.Json(w, data, 200)
 	}
 }
