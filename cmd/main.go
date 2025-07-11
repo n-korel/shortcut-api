@@ -6,16 +6,26 @@ import (
 
 	"github.com/n-korel/shortcut-api/configs"
 	"github.com/n-korel/shortcut-api/internal/auth"
+	"github.com/n-korel/shortcut-api/internal/link"
+	"github.com/n-korel/shortcut-api/pkg/db"
 )
 
 
 
 func main() {
 	conf := configs.LoadConfig()
-	
+	db := db.NewDb(conf)
 	router := http.NewServeMux()
+
+	//Repositories
+	linkRepository := link.NewLinkRepository(db)
+
+	//Handlers
 	auth.NewAuthHandler(router, auth.AuthHandlerDeps{
 		Config: conf,
+	})
+	link.NewLinkHandler(router, link.LinkHandlerDeps{
+		LinkRepository: linkRepository,
 	})
 
 	server := http.Server{
