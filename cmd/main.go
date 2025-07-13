@@ -8,6 +8,7 @@ import (
 	"github.com/n-korel/shortcut-api/internal/auth"
 	"github.com/n-korel/shortcut-api/internal/link"
 	"github.com/n-korel/shortcut-api/pkg/db"
+	"github.com/n-korel/shortcut-api/pkg/middleware"
 )
 
 
@@ -28,9 +29,15 @@ func main() {
 		LinkRepository: linkRepository,
 	})
 
+	//Middlewares
+	stack := middleware.Chain(
+		middleware.CORS,
+		middleware.Logging,
+	)
+
 	server := http.Server{
 		Addr: "127.0.0.1:8081",
-		Handler: router,
+		Handler: stack(router),
 	}
 
 	fmt.Println("Server is listening on port 8081")
