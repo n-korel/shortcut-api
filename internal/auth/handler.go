@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/n-korel/shortcut-api/configs"
+	"github.com/n-korel/shortcut-api/pkg/jwt"
 	"github.com/n-korel/shortcut-api/pkg/req"
 	"github.com/n-korel/shortcut-api/pkg/res"
 )
@@ -35,14 +35,24 @@ func (handler *AuthHandler) Login() http.HandlerFunc {
 		if err != nil {
 			return 
 		}
-
-		fmt.Println(body)
+		email, err := handler.AuthService.Login(body.Email, body.Password)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnauthorized) 
+			return 
+		}
+		
+		token, err := jwt.NewJWT(handler.Config.Auth.Secret).Create(jwt.JWTData{
+			Email: email,
+		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError) 
+			return 
+		}
 
 		data := LoginResponse{
-			Token: "12345678",
+			Token: token,
 		}
 		res.Json(w, data, 200)
-		
 	}
 }
 
@@ -53,6 +63,23 @@ func (handler *AuthHandler) Register() http.HandlerFunc {
 			return 
 		}
 
-		handler.AuthService.Register(body.Email, body.Password, body.Name)
+		email, err := handler.AuthService.Register(body.Email, body.Password, body.Name)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return  
+		}
+		
+		token, err := jwt.NewJWT(handler.Config.Auth.Secret).Create(jwt.JWTData{
+			Email: email,
+		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError) 
+			return 
+		}
+
+		data := RegisterResponse{
+			Token: token,
+		}
+		res.Json(w, data, 200)
 	}
 }

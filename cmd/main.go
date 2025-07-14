@@ -13,7 +13,6 @@ import (
 )
 
 
-
 func main() {
 	conf := configs.LoadConfig()
 	db := db.NewDb(conf)
@@ -33,6 +32,7 @@ func main() {
 	})
 	link.NewLinkHandler(router, link.LinkHandlerDeps{
 		LinkRepository: linkRepository,
+		Config: conf,
 	})
 
 	//Middlewares
