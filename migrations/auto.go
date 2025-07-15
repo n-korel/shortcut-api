@@ -5,6 +5,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/n-korel/shortcut-api/internal/link"
+	"github.com/n-korel/shortcut-api/internal/stat"
 	"github.com/n-korel/shortcut-api/internal/user"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -19,5 +20,5 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&link.Link{}, &user.User{})
+	db.AutoMigrate(&link.Link{}, &user.User{}, &stat.Stat{})
 }
