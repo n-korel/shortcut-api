@@ -1,17 +1,17 @@
 package stat
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/n-korel/shortcut-api/configs"
 	"github.com/n-korel/shortcut-api/pkg/middleware"
+	"github.com/n-korel/shortcut-api/pkg/res"
 )
 
 const (
-	FilterByDay = "day"
-	FilterByMonth = "month"
+	GroupByDay = "day"
+	GroupByMonth = "month"
 )
 
 type StatHandlerDeps struct {
@@ -45,10 +45,11 @@ func (handler *StatHandler) GetStat() http.HandlerFunc {
 		}
 
 		by := r.URL.Query().Get("by")
-		if by != FilterByDay && by != FilterByMonth {
+		if by != GroupByDay && by != GroupByMonth {
 			http.Error(w, "Invalid from param", http.StatusBadRequest)
 			return 
 		}
-		fmt.Println(from, to, by)
+		stats := handler.StatRepository.GetStats(by, from, to)
+		res.Json(w, stats, 200)
 	}
 }
