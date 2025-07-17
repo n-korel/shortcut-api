@@ -4,14 +4,15 @@ import (
 	"errors"
 
 	"github.com/n-korel/shortcut-api/internal/user"
+	"github.com/n-korel/shortcut-api/pkg/di"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService struct {
-	UserRepository *user.UserRepository
+	UserRepository di.IUserRepository
 }
 
-func NewAuthService(userRepository *user.UserRepository) *AuthService {
+func NewAuthService(userRepository di.IUserRepository) *AuthService {
 	return &AuthService{UserRepository: userRepository}
 }
 
